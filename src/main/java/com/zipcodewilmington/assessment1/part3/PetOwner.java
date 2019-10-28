@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by leon on 2/16/18.
  */
 public class PetOwner {
-    private Pet[] pets;
+    public Pet[] pets;
     private String name;
     /**
      * @param name name of the owner of the Pet
@@ -18,15 +18,26 @@ public class PetOwner {
     public PetOwner(String name, Pet... pets) {
         this.pets = pets;
         this.name = name;
+        if (pets != null) {
+            for (Pet pet : pets) {
+                pet.setOwner(this);
+            }
+        }
     }
 
     /**
      * @param pet pet to be added to the composite collection of Pets
      */
     public void addPet(Pet pet) {
-        Pet[] newArray = new Pet[pets.length+1];
+        Integer newArraySize;
+        if (pets != null){
+            newArraySize = pets.length + 1;
+        } else {
+            newArraySize = 1;
+        }
+        Pet[] newArray = new Pet[newArraySize];
 
-        for (int i = 0; i < pets.length; i++) {
+        for (int i = 0; i < newArraySize-1; i++) {
             newArray[i] = pets[i];
         }
         newArray[newArray.length-1] = pet;
@@ -37,14 +48,22 @@ public class PetOwner {
      * @param pet pet to be removed from the composite collection Pets
      */
     public void removePet(Pet pet) {
-        Pet[] newArray = new Pet[pets.length-1];
+        Integer newArraySize;
+        if (pets != null && pets.length > 1) {
+            newArraySize = pets.length - 1;
+        } else {
+            newArraySize = 1;
+        }
+
+        Pet[] newArray = new Pet[newArraySize];
         int idx = 0;
-        for (Pet existingPet: pets) {
-            if (!existingPet.equals(pet)) {
-                newArray[idx] = existingPet;
+        for (int i = 0; i < newArraySize; i++) {
+            if (!pets[i].equals(pet)) {
+                newArray[idx] = pets[i];
                 idx += 1;
             }
         }
+
         pets = newArray;
     }
 
@@ -53,7 +72,13 @@ public class PetOwner {
      * @return true if I own this pet
      */
     public Boolean isOwnerOf(Pet pet) {
-        return (pet.getOwner().name == this.name);
+        boolean isOwner = false;
+        for (Pet existingPet : this.pets) {
+            if (existingPet.equals(pet)) {
+                isOwner = true;
+            }
+        }
+        return isOwner;
     }
 
     public Integer[] getPetAgesArray() {
